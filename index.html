@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agendamento de Entrevista — MBA inteli</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --roxo: #2e2640;
+    --coral: #ff4545;
+    --cinza-claro: #e6eaeb;
+    --cinza-medio: #caced6;
+    --cinza-escuro: #b2b6bf;
+    --branco: #ffffff;
+    --corpo: #3a3a4a;
+    --secundario: #757575;
+    --verde-escuro: #066d73;
+    --verde-claro: #89cea5;
+    --shadow: 0 2px 8px rgba(46,38,64,0.10);
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: var(--cinza-claro);
+    color: var(--corpo);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--roxo);
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo-text {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.5px;
+  }
+  .logo-dot { color: var(--coral); }
+  .logo-divider { width: 1px; height: 24px; background: rgba(255,255,255,0.25); }
+  .logo-subtitle {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, var(--roxo) 0%, #1a1530 100%);
+    padding: 52px 40px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 240px; height: 240px;
+    border-radius: 50%;
+    background: rgba(6,109,115,0.18);
+  }
+  .hero-inner { max-width: 680px; position: relative; z-index: 1; }
+  .hero-badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--coral);
+    background: rgba(255,69,69,0.12);
+    border: 1px solid rgba(255,69,69,0.3);
+    border-radius: 4px;
+    padding: 4px 10px;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: white;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+  .hero p {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.7;
+    max-width: 520px;
+  }
+
+  .main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 20px 60px;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .sidebar { display: flex; flex-direction: column; gap: 16px; }
+
+  .info-card {
+    background: var(--branco);
+    border-radius: var(--radius);
+    padding: 22px;
+    box-shadow: var(--shadow);
+  }
+  .info-card-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--coral);
+    margin-bottom: 14px;
+  }
+  .info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .info-item:last-child { margin-bottom: 0; }
+  .info-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: var(--cinza-claro);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 0.9rem;
+  }
+  .info-label {
+    font-size: 0.7rem;
+    color: var(--secundario);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+  }
+  .info-value { font-size: 0.88rem; font-weight: 600; color: var(--roxo); }
+
+  .steps-card {
+    background: var(--verde-escuro);
+    border-radius: var(--radius);
+    padding: 22px;
+  }
+  .steps-card .info-card-label { color: var(--verde-claro); }
+  .step-item { display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
+  .step-item:last-child { margin-bottom: 0; }
+  .step-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--coral);
+    color: white;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .step-text { font-size: 0.82rem; color: rgba(255,255,255,0.85); line-height: 1.5; }
+
+  /* FORM CARD */
+  .form-card {
+    background: var(--branco);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .form-section {
+    padding: 28px 32px;
+    border-bottom: 1px solid var(--cinza-claro);
+  }
+  .form-section:last-child { border-bottom: none; }
+  .section-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--roxo);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::before {
+    content: '';
+    display: inline-block;
+    width: 3px; height: 14px;
+    background: var(--coral);
+    border-radius: 2px;
+  }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--roxo);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  label .obrigatorio { color: var(--coral); margin-left: 2px; }
+
+  input, select, textarea {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.9rem;
+    padding: 10px 14px;
+    border: 1.5px solid var(--cinza-medio);
+    border-radius: var(--radius-sm);
+    color: var(--corpo);
+    background: white;
+    transition: border-color 0.15s;
+    outline: none;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--verde-escuro); }
+  textarea { resize: vertical; min-height: 80px; }
+
+  .aviso {
+    background: rgba(6,109,115,0.07);
+    border: 1px solid rgba(6,109,115,0.2);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-size: 0.82rem;
+    color: var(--verde-escuro);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .aviso strong { font-weight: 700; }
+
+  .btn-submit {
+    width: 100%;
+    padding: 14px;
+    background: var(--roxo);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-submit:hover:not(:disabled) { background: #1a1530; }
+  .btn-submit:disabled { background: var(--cinza-medio); cursor: default; }
+
+  .loading-dots { display: none; gap: 4px; align-items: center; }
+  .loading-dots.visible { display: inline-flex; }
+  .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%; background: white;
+    animation: blink 1s infinite;
+  }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%,80%,100%{opacity:0.2} 40%{opacity:1} }
+
+  /* REDIRECT SCREEN */
+  .redirect-screen {
+    display: none;
+    padding: 48px 32px;
+    text-align: center;
+  }
+  .redirect-screen.visible { display: block; }
+  .redirect-icon {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: rgba(6,109,115,0.1);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 2rem;
+  }
+  .redirect-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--roxo);
+    margin-bottom: 10px;
+  }
+  .redirect-text {
+    font-size: 0.88rem;
+    color: var(--secundario);
+    line-height: 1.7;
+    max-width: 400px;
+    margin: 0 auto 24px;
+  }
+  .btn-link {
+    display: inline-block;
+    padding: 13px 28px;
+    background: var(--verde-escuro);
+    color: white;
+    border-radius: var(--radius-sm);
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .btn-link:hover { background: #044e53; }
+
+  .countdown {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--cinza-escuro);
+    margin-top: 16px;
+  }
+
+  .error-msg {
+    display: none;
+    background: rgba(255,69,69,0.08);
+    border: 1px solid rgba(255,69,69,0.25);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    font-size: 0.82rem;
+    color: var(--coral);
+    margin-top: 12px;
+  }
+  .error-msg.visible { display: block; }
+
+  @media (max-width: 720px) {
+    .main { grid-template-columns: 1fr; }
+    header { padding: 16px 20px; }
+    .hero { padding: 36px 20px; }
+    .form-section { padding: 20px; }
+    .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-text">inteli<span class="logo-dot">.</span></div>
+  <div class="logo-divider"></div>
+  <div class="logo-subtitle">MBA & Executive</div>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">Processo Seletivo 2025</div>
+    <h1>Agende sua entrevista<br>de admissão ao MBA</h1>
+    <p>Preencha seus dados abaixo. Você será direcionado automaticamente para escolher data e horário na agenda do seu entrevistador.</p>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="sidebar">
+    <div class="info-card">
+      <div class="info-card-label">Sobre a entrevista</div>
+      <div class="info-item">
+        <div class="info-icon">⏱</div>
+        <div>
+          <div class="info-label">Duração</div>
+          <div class="info-value">45 minutos</div>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">💻</div>
+        <div>
+          <div class="info-label">Formato</div>
+          <div class="info-value">Videochamada (Google Meet)</div>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">🌎</div>
+        <div>
+          <div class="info-label">Fuso horário</div>
+          <div class="info-value">Horário de Brasília</div>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">👤</div>
+        <div>
+          <div class="info-label">Entrevistador</div>
+          <div class="info-value">Designado automaticamente</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="steps-card">
+      <div class="info-card-label">Como funciona</div>
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-text">Preencha seus dados de contato abaixo</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-text">Clique em continuar — um entrevistador será designado automaticamente</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-text">Escolha a data e horário diretamente na agenda do entrevistador</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-text">Você receberá um convite do Google Calendar com o link do Meet</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM CARD -->
+  <div class="form-card" id="formCard">
+    <div class="form-section" id="formSection">
+      <div class="section-title">Seus dados</div>
+
+      <div class="aviso">
+        <strong>Como funciona o agendamento:</strong> após preencher este formulário, você será redirecionado para a agenda do seu entrevistador, onde poderá escolher o horário de sua preferência. O convite com o link do Google Meet chegará automaticamente no seu e-mail.
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Nome completo <span class="obrigatorio">*</span></label>
+          <input type="text" id="nome" placeholder="Seu nome completo">
+        </div>
+        <div class="form-group full">
+          <label>E-mail <span class="obrigatorio">*</span></label>
+          <input type="email" id="email" placeholder="seu@email.com">
+        </div>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <button class="btn-submit" id="btnSubmit" onclick="continuar()">
+          Continuar para agendamento →
+          <span class="loading-dots" id="loadingDots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </span>
+        </button>
+        <div class="error-msg" id="errorMsg"></div>
+      </div>
+    </div>
+
+    <!-- REDIRECT SCREEN -->
+    <div class="redirect-screen" id="redirectScreen">
+      <div class="redirect-icon">🗓️</div>
+      <div class="redirect-title">Tudo certo, <span id="nomeConfirm"></span>!</div>
+      <div class="redirect-text">
+        Seu entrevistador foi designado. Clique no botão abaixo para abrir a agenda e escolher o melhor horário para você.
+      </div>
+      <a href="#" id="linkAgendamento" class="btn-link" target="_blank">
+        Abrir agenda e escolher horário →
+      </a>
+      <div class="countdown" id="countdown"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // =============================================
+  // CONFIGURAÇÃO — cole a URL do Apps Script aqui
+  // =============================================
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxieIkl7-4LgT2KtI3JeoYPQFVowoDN8ALhmFqb7M5xm77N-4VvoY6yU1jiOT8sIy4lmw/exec';
+
+  // =============================================
+  // FLUXO PRINCIPAL
+  // =============================================
+  async function continuar() {
+    const nome = document.getElementById('nome').value.trim();
+    const email = document.getElementById('email').value.trim();
+    
+    if (!nome || !email) {
+      mostrarErro('Por favor, preencha nome e e-mail.');
+      return;
+    }
+    if (!validarEmail(email)) {
+      mostrarErro('Por favor, insira um e-mail válido.');
+      return;
+    }
+
+    setCarregando(true);
+
+    try {
+      let entrevistador;
+
+      if (SCRIPT_URL === 'COLE_AQUI_A_URL_DO_SEU_APPS_SCRIPT') {
+        // MODO DEMO — simula resposta do backend
+        await new Promise(r => setTimeout(r, 1000));
+        entrevistador = {
+          nome: 'Ana Souza (demo)',
+          linkAgendamento: 'https://calendar.google.com',
+        };
+      } else {
+        // Busca próximo entrevistador E registra candidato em um único GET
+        const params = new URLSearchParams({
+          action: 'proximoEntrevistador',
+          nome, email,
+        });
+        const res = await fetch(`${SCRIPT_URL}?${params}`);
+        const data = await res.json();
+
+        if (!data.ok) throw new Error(data.erro || 'Erro ao buscar entrevistador.');
+        entrevistador = data;
+      }
+
+      mostrarRedirect(nome, entrevistador);
+
+    } catch (err) {
+      setCarregando(false);
+      mostrarErro('Ocorreu um erro. Por favor, tente novamente ou entre em contato com a equipe.');
+      console.error(err);
+    }
+  }
+
+  function mostrarRedirect(nome, entrevistador) {
+    document.getElementById('formSection').style.display = 'none';
+    const redirect = document.getElementById('redirectScreen');
+    redirect.classList.add('visible');
+
+    document.getElementById('nomeConfirm').textContent = nome.split(' ')[0];
+    document.getElementById('linkAgendamento').href = entrevistador.linkAgendamento;
+
+    // Contador regressivo para abrir automaticamente
+    let segundos = 5;
+    const countdownEl = document.getElementById('countdown');
+    countdownEl.textContent = `Abrindo automaticamente em ${segundos}s...`;
+
+    const timer = setInterval(() => {
+      segundos--;
+      if (segundos <= 0) {
+        clearInterval(timer);
+        countdownEl.textContent = '';
+        window.open(entrevistador.linkAgendamento, '_blank');
+      } else {
+        countdownEl.textContent = `Abrindo automaticamente em ${segundos}s...`;
+      }
+    }, 1000);
+  }
+
+  // =============================================
+  // UTILITÁRIOS
+  // =============================================
+  function setCarregando(sim) {
+    const btn = document.getElementById('btnSubmit');
+    const dots = document.getElementById('loadingDots');
+    btn.disabled = sim;
+    dots.classList.toggle('visible', sim);
+    if (sim) btn.childNodes[0].textContent = 'Aguarde... ';
+    else btn.childNodes[0].textContent = 'Continuar para agendamento → ';
+  }
+
+  function mostrarErro(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.classList.add('visible');
+    setTimeout(() => el.classList.remove('visible'), 5000);
+  }
+
+  function validarEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  // =============================================
+  // JSONP — contorna bloqueio de CORS do Apps Script
+  // =============================================
+  function chamarScriptJSONP(params) {
+    return new Promise((resolve, reject) => {
+      const callbackName = 'jsonpCallback_' + Date.now();
+      const timeout = setTimeout(() => {
+        delete window[callbackName];
+        document.getElementById(callbackName)?.remove();
+        reject(new Error('Timeout — o script demorou demais para responder.'));
+      }, 15000);
+
+      window[callbackName] = function(data) {
+        clearTimeout(timeout);
+        delete window[callbackName];
+        document.getElementById(callbackName)?.remove();
+        resolve(data);
+      };
+
+      const url = new URLSearchParams({ ...params, callback: callbackName });
+      const script = document.createElement('script');
+      script.id = callbackName;
+      script.src = `${SCRIPT_URL}?${url}`;
+      script.onerror = () => {
+        clearTimeout(timeout);
+        delete window[callbackName];
+        reject(new Error('Erro ao carregar o script.'));
+      };
+      document.body.appendChild(script);
+    });
+  }
+
+</script>
+</body>
+</html>
